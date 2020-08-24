@@ -11,10 +11,11 @@ We can only feature one awesome programmer at a time.
 Find comments below to help you along.
 */
 
-import React from 'react';
+import React, {useState} from 'react';
 
 // Use this variable ONLY to initialize a slice of state!
 // There is something in the JSX right now breaking this rule...
+// List of Programmers we use
 const listOfAwesome = [
   { id: '1', name: 'Ada Lovelace' },
   { id: '2', name: 'Grace Hopper' },
@@ -27,13 +28,22 @@ const listOfAwesome = [
 export default function Programmers() {
   // We'll have to use the state hook twice, as we need two slices of state.
   // The programmers list on the one hand, and the id of the featured programmer on the other.
+  // this is where we set the state
+  const [programmerList, setProgrammerList] = useState(listOfAwesome);
+  const [idList, setIdList] = useState();
 
-  const getNameOfFeatured = () => {
+
+  const getNameOfFeatured = (programmerList, idList) => {
     // Leave this for last!
     // This is NOT an event handler but a helper function. See its usage inside the JSX.
     // It's going to utilize both slices of state to return the _name_ of the featured dev.
     // The beauty of closures is that we can "see" both slices of state from this region
     // of the program, without needing to inject the information through arguments.
+    // This is how we get the name of the Programmer
+    let result = programmerList[idList - 1].name
+
+    return result
+
   };
 
   const style = {
@@ -50,9 +60,10 @@ export default function Programmers() {
           /* Nasty bug! We should map over a slice of state, instead of 'listOfAwesome'.
           We might think: "it works, though!" But if the list of programmers is not state,
           we could never add or edit programmers in the future. The list would be a static thing." */
-          listOfAwesome.map(dev =>
+          // we changed this to programmerList so that we can manipulate state in the future
+          programmerList.map(dev =>
             <div key={dev.id}>
-              {dev.name} <button onClick={() => { /* in here set the featured id to be dev.id */ }}>Feature</button>
+              {dev.name} <button onClick={() => { setIdList(dev.id)}}>Feature</button>
             </div>
           )
         }
@@ -61,8 +72,9 @@ export default function Programmers() {
         // Ternaries are fantastic to render "one thing or the other" depending on the "truthiness" of something.
         // Pseudo-code: if the currently featured id is truthy render div 1, otherwise render div 2.
         // Replace the hard-coded false with the correct variable.
-        false
-          ? <div style={style}>🎉 Let&apos;s celebrate {getNameOfFeatured()}! 🥳</div>
+        // used getNameOfFeatured function to pass information to app
+        idList 
+          ? <div style={style}>🎉 Let&apos;s celebrate {getNameOfFeatured(programmerList, idList)}! 🥳</div>
           : <div style={style}>Pick an awesome programmer</div>
       }
     </div>
